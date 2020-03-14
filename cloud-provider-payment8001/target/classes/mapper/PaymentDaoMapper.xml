@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <!-- mapper:根标签，namespace：命名空间,最好写上dao的路径 -->
+<mapper namespace="com.atguigu.springcloud.Dao.PaymentDao">
+                            <!--sql-->
+    <sql id="commonSql">
+        id,
+        serial
+    </sql>
+                            <!--resultPayMent-->
+    <resultMap id="resultPayMent" type="com.atguigu.springcloud.Entity.Payment">
+        <id column="id" property="id"/>
+        <result column="serial" property="serial"></result>
+    </resultMap>
+
+                             <!--select-->
+    <select id="queryPaymentById" resultMap="resultPayMent">
+        SELECT <include refid="commonSql"/>
+        FROM payment
+        WHERE id=#{id}
+    </select>
+
+    <select id="queryPaymentAll" resultMap="resultPayMent">
+        SELECT <include refid="commonSql"/>
+        FROM payment
+    </select>
+
+                            <!--insert-->
+    <!--useGeneratedKeys="true" keyProperty=""-->
+    <insert id="insertPayment" parameterType="com.atguigu.springcloud.Entity.Payment" >
+        INSERT INTO payment
+        (serial )
+        VALUES (#{serial})
+    </insert>
+
+                            <!--update-->
+    <update id="updatePayment" parameterType="com.atguigu.springcloud.Entity.Payment">
+        UPDATE payment
+        <trim prefix="set" suffixOverrides=",">
+            <if test="serial!=null">serial = #{serial}</if>
+        </trim>
+        WHERE
+        (id = #{id});
+    </update>
+                            <!--delete-->
+    <!--注意：我这里的parameterType 为Long 会报错-->
+    <delete id="deletePayment" parameterType="java.util.List">
+        DELETE FROM payment WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
